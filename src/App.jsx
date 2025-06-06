@@ -1,7 +1,7 @@
 import Home from './components/Home'
 import IMT from './components/IMT'
 import Login from './pages/Login'
-import AfterIMT from './pages/after-imt'
+import AfterIMT from './pages/AfterIMT'
 import Profile from './pages/Profile'
 import DetailIMT from './pages/DetailMateri'
 import Register from './pages/Register'
@@ -12,7 +12,6 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 function BottomBar() {
   const location = useLocation()
 
-  // Fungsi untuk cek apakah path ini aktif
   const isActive = (path) => location.pathname === path
 
   return (

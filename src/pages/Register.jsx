@@ -6,11 +6,10 @@ import { Link } from 'react-router-dom'
 export default function Register() {
   const navigate = useNavigate()
 
-
   const [form, setForm] = useState({
     name: '',
     age: '',
-    gender: 'male',
+    gender: '',
     password: ''
   })
   const [message, setMessage] = useState('')
@@ -43,7 +42,7 @@ export default function Register() {
           name: form.name,
           age: parseInt(form.age),
           gender: form.gender,
-          created_at : new Date().toISOString()
+          created_at: new Date().toISOString()
         })
 
         if (profileError) throw profileError

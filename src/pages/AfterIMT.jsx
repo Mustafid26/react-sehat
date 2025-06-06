@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 
 const Card = ({ title, children, onClick }) => (
   <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
@@ -14,21 +14,32 @@ const Card = ({ title, children, onClick }) => (
       </button>
     )}
   </div>
-);
+)
 
 const DashboardCards = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleNavigate = (slug) => {
-    navigate(`/details/${slug}`);
-  };
+    navigate(`/details/${slug}`)
+  }
+
+  const handleBack = () => {
+    navigate('/home')
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8 mb-24">
+      <button
+        onClick={handleBack}
+        className="mb-6 flex items-center text-[#164E50] font-semibold "
+      >
+        <ArrowLeft className="mr-2 h-5 w-5" />
+        Kembali ke Beranda
+      </button>
       <div className="max-w-7xl mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-3">
         <Card
           title="Komponen Berpengaruh"
-          onClick={() => handleNavigate("komponen-berpengaruh")}
+          onClick={() => handleNavigate('komponen-berpengaruh')}
         >
           <ul className="list-disc list-inside space-y-2">
             <li>Asupan nutrisi</li>
@@ -38,18 +49,16 @@ const DashboardCards = () => {
           </ul>
         </Card>
 
-        <Card
-          title="Status Gizi"
-          onClick={() => handleNavigate("status-gizi")}
-        >
+        <Card title="Status Gizi" onClick={() => handleNavigate('status-gizi')}>
           <p>
-            Indeks massa tubuh (IMT), keseimbangan vitamin dan mineral, serta berat badan ideal merupakan indikator utama status gizi yang baik.
+            Indeks massa tubuh (IMT), keseimbangan vitamin dan mineral, serta
+            berat badan ideal merupakan indikator utama status gizi yang baik.
           </p>
         </Card>
 
         <Card
           title="Faktor Risiko Penyakit"
-          onClick={() => handleNavigate("faktor-risiko-penyakit")}
+          onClick={() => handleNavigate('faktor-risiko-penyakit')}
         >
           <ul className="list-disc list-inside space-y-2">
             <li>Merokok</li>
@@ -60,7 +69,7 @@ const DashboardCards = () => {
         </Card>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DashboardCards;
+export default DashboardCards

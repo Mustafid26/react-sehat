@@ -1,72 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { supabase } from '../SupabaseClient';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { supabase } from '../SupabaseClient'
+import { useNavigate } from 'react-router-dom'
 
 export default function IMTModern() {
-  const navigate = useNavigate();
-
-  // State untuk simpan nama user dari DB Supabase
-  const [nama, setNama] = useState('Pengguna');
-  const [tinggi, setTinggi] = useState('');
-  const [berat, setBerat] = useState('');
-  const [hasil, setHasil] = useState('');
+  const navigate = useNavigate()
+  const [nama, setNama] = useState('Pengguna')
+  const [tinggi, setTinggi] = useState('')
+  const [berat, setBerat] = useState('')
+  const [hasil, setHasil] = useState('')
 
   useEffect(() => {
     async function fetchUserProfile() {
       try {
         const {
           data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+          error: userError
+        } = await supabase.auth.getUser()
 
-        if (userError) throw userError;
-        if (!user) return; // user belum login
+        if (userError) throw userError
+        if (!user) return 
 
-        const userId = user.id;
+        const userId = user.id
 
         const { data: profileData, error: profileError } = await supabase
           .from('Profile')
           .select('name')
           .eq('id', userId)
-          .single();
+          .single()
 
-        if (profileError) throw profileError;
+        if (profileError) throw profileError
 
-        setNama(profileData?.name || 'Pengguna');
+        setNama(profileData?.name || 'Pengguna')
       } catch (error) {
-        console.error('Error fetching profile:', error.message);
+        console.error('Error fetching profile:', error.message)
       }
     }
 
-    fetchUserProfile();
-  }, []);
+    fetchUserProfile()
+  }, [])
 
   const hitungIMT = () => {
-    if (!tinggi || !berat) return;
-    const tinggiMeter = tinggi / 100;
-    const imt = berat / (tinggiMeter * tinggiMeter);
-    let kategori = '';
+    if (!tinggi || !berat) return
+    const tinggiMeter = tinggi / 100
+    const imt = berat / (tinggiMeter * tinggiMeter)
+    let kategori = ''
 
-    if (imt < 18.5) kategori = 'Berat badan kurang';
-    else if (imt < 24.9) kategori = 'Normal';
-    else if (imt < 29.9) kategori = 'Kelebihan berat badan';
-    else kategori = 'Obesitas';
+    if (imt < 18.5) kategori = 'Berat badan kurang'
+    else if (imt < 24.9) kategori = 'Normal'
+    else if (imt < 29.9) kategori = 'Kelebihan berat badan'
+    else kategori = 'Obesitas'
 
-    setHasil(`Halo ${nama}!\nIMT kamu: ${imt.toFixed(2)} (${kategori})`);
-  };
+    setHasil(`Halo ${nama}!\nIMT kamu: ${imt.toFixed(2)} (${kategori})`)
+  }
 
   const goToAfterIMT = () => {
-    navigate('/after-imt');
-  };
+    navigate('/after-imt')
+  }
 
   return (
     <div className="min-h-screen bg-[#E5F7E4] flex items-center justify-center px-4 py-8">
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md space-y-6">
-        <h1 className="text-2xl font-bold text-center text-[#164E50]">Kalkulator IMT</h1>
+        <h1 className="text-2xl font-bold text-center text-[#164E50]">
+          Kalkulator IMT
+        </h1>
 
         <div>
-          <label className="block text-[#164E50] font-semibold mb-1">Tinggi Badan (cm)</label>
+          <label className="block text-[#164E50] font-semibold mb-1">
+            Tinggi Badan (cm)
+          </label>
           <input
             type="number"
             value={tinggi}
@@ -77,7 +79,9 @@ export default function IMTModern() {
         </div>
 
         <div>
-          <label className="block text-[#164E50] font-semibold mb-1">Berat Badan (kg)</label>
+          <label className="block text-[#164E50] font-semibold mb-1">
+            Berat Badan (kg)
+          </label>
           <input
             type="number"
             value={berat}
@@ -115,5 +119,5 @@ export default function IMTModern() {
         </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }

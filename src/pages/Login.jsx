@@ -38,7 +38,7 @@ export default function Login() {
         <p className="text-sm text-gray-500 mb-6">
           Belum punya akun?{' '}
           <Link to="/register" className="text-[#164E50] font-semibold">
-            daftar sekarang
+            Daftar sekarang
           </Link>
         </p>
 
@@ -67,7 +67,7 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-[#88DE7C] text-white font-semibold py-3 rounded-full hover:bg-purple-600 transition"
+            className="w-full flex items-center justify-center gap-2 bg-[#88DE7C] text-white font-semibold py-3 rounded-full hover:bg-[#71c566] transition"
           >
             Login
             <svg

@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { supabase } from '../SupabaseClient'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function Login() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ name: '', password: '' })
   const [message, setMessage] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -24,7 +25,6 @@ export default function Login() {
 
       if (error) throw error
 
-      setMessage('Login berhasil!')
       navigate('/home')
     } catch (error) {
       setMessage('Login gagal: ' + error.message)
@@ -47,7 +47,7 @@ export default function Login() {
             <input
               type="text"
               name="name"
-              placeholder="Username"
+              placeholder="Nama"
               value={form.name}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -56,13 +56,20 @@ export default function Login() {
 
           <div className="mb-6 relative">
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
+              className="w-full px-4 py-3 border rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-green-300"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           <button

@@ -4,12 +4,26 @@ import doktor from '/img/docter-min.png'
 import { supabase } from '../SupabaseClient'
 import './Home.css'
 
+const cache = {
+  userProfile: null,
+  berita: {
+    data: null,
+    timestamp: null,
+    page: 1
+  }
+}
+
+const CACHE_DURATION = {
+  userProfile: 5 * 60 * 1000, // 5 menit
+  berita: 10 * 60 * 1000 // 10 menit
+}
+
 export default function CourseDashboard() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [loadingDots, setLoadingDots] = useState('.')
-  const [userName, setUserName] = useState('') // <- state untuk nama user
+  const [userName, setUserName] = useState('')
 
   const apiKey = import.meta.env.VITE_NEWS_API_KEY
 
@@ -24,9 +38,29 @@ export default function CourseDashboard() {
     return judul.length > maxLength ? judul.slice(0, maxLength) + '...' : judul
   }
 
-  useEffect(() => {
-    // ambil user dan nama dari supabase
-    const fetchUserProfile = async () => {
+  const isCacheValid = (cacheType) => {
+    if (cacheType === 'userProfile') {
+      return (
+        cache.userProfile &&
+        Date.now() - cache.userProfile.timestamp < CACHE_DURATION.userProfile
+      )
+    }
+    if (cacheType === 'berita') {
+      return (
+        cache.berita.data &&
+        Date.now() - cache.berita.timestamp < CACHE_DURATION.berita
+      )
+    }
+    return false
+  }
+
+  const fetchUserProfile = async () => {
+    if (isCacheValid('userProfile')) {
+      setUserName(cache.userProfile.name)
+      return
+    }
+
+    try {
       const { data: userData } = await supabase.auth.getUser()
       const userId = userData?.user?.id
 
@@ -36,31 +70,43 @@ export default function CourseDashboard() {
           .select('name')
           .eq('id', userId)
           .single()
+
         if (!error && data?.name) {
+          // Update cache
+          cache.userProfile = {
+            name: data.name,
+            timestamp: Date.now()
+          }
           setUserName(data.name)
         }
       }
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+    }
+  }
+
+  const fetchBerita = async (pageNumber = 1, forceRefresh = false) => {
+    if (pageNumber === 1 && !forceRefresh && isCacheValid('berita')) {
+      setArticles(cache.berita.data)
+      setPage(cache.berita.page)
+      return
     }
 
-    fetchUserProfile()
-  }, [])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLoadingDots((prev) => (prev.length >= 3 ? '.' : prev + '.'))
-    }, 500)
-    return () => clearInterval(interval)
-  }, [])
-
-  const fetchBerita = async (pageNumber = 1) => {
     setLoading(true)
     try {
       const response = await fetch(
-        `https://newsapi.org/v2/everything?q=kesehatan&language=id&pageSize=4&page=${pageNumber}&apiKey=${apiKey}`
+        `https://newsapi.org/v2/everything?q=kesehatan&language=id&pageSize=3&page=${pageNumber}&apiKey=${apiKey}`
       )
       const data = await response.json()
+
       if (pageNumber === 1) {
         setArticles(data.articles)
+        // Update cache hanya untuk halaman pertama
+        cache.berita = {
+          data: data.articles,
+          timestamp: Date.now(),
+          page: 1
+        }
       } else {
         setArticles((prev) => [...prev, ...data.articles])
       }
@@ -72,6 +118,14 @@ export default function CourseDashboard() {
   }
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadingDots((prev) => (prev.length >= 3 ? '.' : prev + '.'))
+    }, 500)
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    fetchUserProfile()
     fetchBerita()
   }, [])
 
@@ -111,10 +165,12 @@ export default function CourseDashboard() {
             <Link
               key={index}
               to={category.link || '#'}
-              className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center justify-center hover:shadow-lg transition-shadow duration-300 button-ctg"
+              className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center justify-center hover:shadow-lg transition-shadow duration-300 button-ctg min-w-[140px]"
             >
               <div className="text-4xl mb-2">{category.icon}</div>
-              <p className="text-sm font-medium">{category.title}</p>
+              <p className="text-sm font-medium text-center break-words">
+                {category.title}
+              </p>
             </Link>
           ))}
         </div>
@@ -122,7 +178,10 @@ export default function CourseDashboard() {
 
       {/* News Section */}
       <div className="mt-8 p-4">
-        <h2 className="text-lg font-semibold mb-4">Berita Kesehatan Terbaru</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Berita Kesehatan Terbaru</h2>
+        </div>
+
         {loading && page === 1 ? (
           <p className="text-center text-[#164E50] font-semibold">
             Loading{loadingDots}

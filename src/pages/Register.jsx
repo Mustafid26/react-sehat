@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { supabase } from '../SupabaseClient'
-import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function Register() {
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
 
   const [form, setForm] = useState({
     name: '',
@@ -23,7 +24,6 @@ export default function Register() {
     try {
       const username = form.name.trim().toLowerCase().replace(/\s+/g, '')
       const email = `${username}@gmail.com`
-
       const password = form.password
 
       const { data: authData, error: signUpError } = await supabase.auth.signUp(
@@ -71,7 +71,7 @@ export default function Register() {
             <input
               type="text"
               name="name"
-              placeholder="Username"
+              placeholder="Nama"
               value={form.name}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -82,7 +82,7 @@ export default function Register() {
             <input
               type="number"
               name="age"
-              placeholder="Age"
+              placeholder="Umur"
               value={form.age}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -96,8 +96,8 @@ export default function Register() {
               onChange={handleChange}
               className="appearance-none w-full bg-white border border-gray-300 rounded-full py-3 px-4 pr-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-500"
             >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="female">Perempuan</option>
+              <option value="male">Laki-Laki</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-gray-500">
               <svg
@@ -117,13 +117,20 @@ export default function Register() {
 
           <div className="mb-6 relative">
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
+              className="w-full px-4 py-3 border rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-green-300"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           <button

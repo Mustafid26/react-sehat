@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { supabase } from '../SupabaseClient'
 import { useNavigate } from 'react-router-dom'
+import { IMTContext } from '../context/IMTContext'
 
 export default function IMTModern() {
   const navigate = useNavigate()
+  const { setImtData } = useContext(IMTContext)
   const [nama, setNama] = useState('Pengguna')
   const [tinggi, setTinggi] = useState('')
   const [berat, setBerat] = useState('')
@@ -19,7 +21,7 @@ export default function IMTModern() {
         } = await supabase.auth.getUser()
 
         if (userError) throw userError
-        if (!user) return 
+        if (!user) return
 
         const userId = user.id
 
@@ -45,13 +47,14 @@ export default function IMTModern() {
     const tinggiMeter = tinggi / 100
     const imt = berat / (tinggiMeter * tinggiMeter)
     let kategori = ''
+    let beratSehat = (22 * tinggiMeter * tinggiMeter).toFixed(1);
 
     if (imt < 18.5) kategori = 'Berat badan kurang'
     else if (imt < 24.9) kategori = 'Normal'
     else if (imt < 29.9) kategori = 'Kelebihan berat badan'
     else kategori = 'Obesitas'
-
-    setHasil(`Halo ${nama}!\nIMT kamu: ${imt.toFixed(2)} (${kategori})`)
+    setHasil(`Halo ${nama}!\nIMT kamu: ${imt.toFixed(2)} kg/m² (${kategori})`)
+    setImtData({ nama, imt, kategori, beratSehat })
   }
 
   const goToAfterIMT = () => {

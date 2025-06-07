@@ -11,6 +11,44 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+
+const profileCache = {
+  data: null,
+  timestamp: null,
+  CACHE_DURATION: 5 * 60 * 1000, 
+
+  set(data) {
+    this.data = data
+    this.timestamp = Date.now()
+  },
+
+  get() {
+    if (!this.data || !this.timestamp) return null
+
+    const now = Date.now()
+    if (now - this.timestamp > this.CACHE_DURATION) {
+      // Cache expired
+      this.clear()
+      return null
+    }
+
+    return this.data
+  },
+
+  clear() {
+    this.data = null
+    this.timestamp = null
+  },
+
+  isValid() {
+    return (
+      this.data &&
+      this.timestamp &&
+      Date.now() - this.timestamp < this.CACHE_DURATION
+    )
+  }
+}
+
 export default function Profile() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -35,6 +73,13 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         setLoading(true)
+        const cachedProfile = profileCache.get()
+        if (cachedProfile) {
+          setProfile(cachedProfile)
+          setLoading(false)
+          return
+        }
+
         const {
           data: { user },
           error: userError
@@ -51,12 +96,16 @@ export default function Profile() {
 
         if (error) throw error
 
-        setProfile({
+        const profileData = {
           avatar_url: data.avatar_url || '',
           name: data.name || '',
           age: data.age || '',
           gender: data.gender || 'male'
-        })
+        }
+
+        // Cache the fetched data
+        profileCache.set(profileData)
+        setProfile(profileData)
       } catch (error) {
         setMessage({
           text: 'Gagal load profil: ' + error.message,
@@ -66,6 +115,7 @@ export default function Profile() {
         setLoading(false)
       }
     }
+
     fetchProfile()
   }, [])
 
@@ -114,6 +164,8 @@ export default function Profile() {
         if (updatePassError) throw updatePassError
       }
 
+      profileCache.set(profile)
+
       setMessage({ text: 'Profil berhasil disimpan.', type: 'success' })
       setPasswords({
         currentPassword: '',
@@ -134,6 +186,7 @@ export default function Profile() {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
+      profileCache.clear()
       navigate('/')
     } catch (error) {
       setMessage({ text: 'Gagal logout: ' + error.message, type: 'error' })
@@ -145,6 +198,48 @@ export default function Profile() {
       ...prev,
       [field]: !prev[field]
     }))
+  }
+
+  const refreshProfile = async () => {
+    try {
+      setLoading(true)
+      profileCache.clear()
+      const {
+        data: { user },
+        error: userError
+      } = await supabase.auth.getUser()
+
+      if (userError) throw userError
+      if (!user) throw new Error('User tidak ditemukan')
+
+      const { data, error } = await supabase
+        .from('Profile')
+        .select('avatar_url, name, age, gender')
+        .eq('id', user.id)
+        .single()
+
+      if (error) throw error
+
+      const profileData = {
+        avatar_url: data.avatar_url || '',
+        name: data.name || '',
+        age: data.age || '',
+        gender: data.gender || 'male'
+      }
+
+      // Update state and cache
+      setProfile(profileData)
+      profileCache.set(profileData)
+
+      setMessage({ text: 'Profile berhasil di-refresh', type: 'success' })
+    } catch (error) {
+      setMessage({
+        text: 'Gagal refresh profile: ' + error.message,
+        type: 'error'
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -264,16 +359,28 @@ export default function Profile() {
               </button>
             </div>
           </div>
-          <button
-            onClick={handleSave}
-            className="w-full bg-[#164E50] text-white px-4 py-2 rounded mt-4"
-            disabled={loading}
-          >
-            {loading ? 'Saving...' : 'Edit profile'}
-          </button>
+
+          <div className="flex gap-3 mt-4">
+            <button
+              onClick={handleSave}
+              className="flex-1 bg-[#164E50] text-white px-4 py-2 rounded"
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : 'Edit profile'}
+            </button>
+
+            <button
+              onClick={refreshProfile}
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded"
+              disabled={loading}
+            >
+              Refresh Profile
+            </button>
+          </div>
+
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600 text-white px-4 py-2 rounded mt-2"
+            className="w-full bg-red-600 text-white px-4 py-2 rounded"
             disabled={loading}
           >
             Logout

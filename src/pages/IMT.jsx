@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { supabase } from '../SupabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { IMTContext } from '../context/IMTContext'
+import { ArrowLeft } from 'lucide-react'
 
 export default function IMTModern() {
   const navigate = useNavigate()
@@ -47,7 +48,7 @@ export default function IMTModern() {
     const tinggiMeter = tinggi / 100
     const imt = berat / (tinggiMeter * tinggiMeter)
     let kategori = ''
-    let beratSehat = (22 * tinggiMeter * tinggiMeter).toFixed(1);
+    let beratSehat = (22 * tinggiMeter * tinggiMeter).toFixed(1)
 
     if (imt < 18.5) kategori = 'Berat badan kurang'
     else if (imt < 24.9) kategori = 'Normal'
@@ -60,9 +61,19 @@ export default function IMTModern() {
   const goToAfterIMT = () => {
     navigate('/after-imt')
   }
+  const handleBack = () => {
+    navigate('/home')
+  }
 
   return (
-    <div className="min-h-screen bg-[#E5F7E4] flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex items-center justify-center px-4 py-8 relative">
+      <button
+        onClick={handleBack}
+        className="absolute top-4 left-4 flex items-center font-bold text-[#164E50] mt-4"
+      >
+        <ArrowLeft className="mr-2 h-5 w-5" />
+        Kembali
+      </button>
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md space-y-6">
         <h1 className="text-2xl font-bold text-center text-[#164E50]">
           Kalkulator IMT

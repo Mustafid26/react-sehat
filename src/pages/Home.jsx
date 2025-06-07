@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import doktor from '/img/docter-min.png'
 import { supabase } from '../SupabaseClient'
-import './Home.css'
+import '../assets/style/Home.css'
+import { link } from 'framer-motion/client'
 
 const cache = {
   userProfile: null,
@@ -29,7 +30,7 @@ export default function CourseDashboard() {
 
   const categories = [
     { title: 'IMT', icon: '📘', link: '/IMT' },
-    { title: 'Kalkulator Kalori', icon: '📊' },
+    { title: 'Kalkulator Kalori', icon: '📊', link: '/kalori' },
     { title: 'Kalender Kehamilan', icon: '📝', link: '/kalender' },
     { title: 'Quiz', icon: '📚' }
   ]

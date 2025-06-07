@@ -1,11 +1,12 @@
-import Home from './components/Home'
-import IMT from './components/IMT'
+import Home from './pages/Home'
+import IMT from './pages/IMT'
 import Login from './pages/Login'
 import AfterIMT from './pages/AfterIMT'
 import Profile from './pages/Profile'
 import Kalender from './pages/Kalender'
 import DetailIMT from './pages/DetailMateri'
 import Register from './pages/Register'
+import Kalori from './pages/Kalori'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
@@ -43,9 +44,9 @@ function BottomBar() {
       </Link>
 
       <Link
-        to="/Profile"
+        to="/profile"
         className={`flex flex-col items-center mb-1 ${
-          isActive('/Profile')
+          isActive('/profile')
             ? 'text-green-600'
             : 'text-gray-700 hover:text-green-600'
         }`}
@@ -114,10 +115,11 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/IMT" element={<IMT />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/Profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/after-imt" element={<AfterIMT />} />
         <Route path="/details/:judul" element={<DetailIMT />} />
         <Route path="/kalender" element={<Kalender />} />
+        <Route path="/kalori" element={<Kalori />} />
       </Routes>
 
       {!hideBottomBar && <BottomBar />}

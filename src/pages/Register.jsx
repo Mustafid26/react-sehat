@@ -62,7 +62,7 @@ export default function Register() {
         <p className="text-sm text-gray-500 mb-6">
           Sudah punya akun?{' '}
           <Link to="/" className="text-[#164E50] font-semibold">
-            login
+            Login
           </Link>
         </p>
 

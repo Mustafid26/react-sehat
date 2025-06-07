@@ -273,7 +273,7 @@ export default function Profile() {
                 className="w-full h-full object-cover rounded-full"
               />
             ) : (
-              <User className="text-[#88DE7C] w-10 h-10" />
+              <User className="text-[#164E50] w-10 h-10" />
             )}
           </div>
           <h2 className="text-xl font-semibold mt-2">
@@ -390,7 +390,7 @@ export default function Profile() {
 
             <button
               onClick={refreshProfile}
-              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded"
+              className="flex-1 bg-[#164E50] text-white px-4 py-2 rounded"
               disabled={loading}
             >
               Refresh Profile

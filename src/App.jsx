@@ -3,6 +3,7 @@ import IMT from './components/IMT'
 import Login from './pages/Login'
 import AfterIMT from './pages/AfterIMT'
 import Profile from './pages/Profile'
+import Kalender from './pages/Kalender'
 import DetailIMT from './pages/DetailMateri'
 import Register from './pages/Register'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
@@ -116,6 +117,7 @@ function App() {
         <Route path="/Profile" element={<Profile />} />
         <Route path="/after-imt" element={<AfterIMT />} />
         <Route path="/details/:judul" element={<DetailIMT />} />
+        <Route path="/kalender" element={<Kalender />} />
       </Routes>
 
       {!hideBottomBar && <BottomBar />}

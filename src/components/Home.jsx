@@ -30,7 +30,7 @@ export default function CourseDashboard() {
   const categories = [
     { title: 'IMT', icon: '📘', link: '/IMT' },
     { title: 'Kalkulator Kalori', icon: '📊' },
-    { title: 'Kalender Kehamilan', icon: '📝' },
+    { title: 'Kalender Kehamilan', icon: '📝', link: '/kalender' },
     { title: 'Quiz', icon: '📚' }
   ]
 
@@ -140,7 +140,7 @@ export default function CourseDashboard() {
       {/* Header */}
       <div className="relative bg-[#91ea85] p-4 rounded-b-3xl text-white mb-[5rem] h-[8rem]">
         {/* Selamat Datang Card */}
-        <div className="absolute top-12 left-4 right-4 bg-white text-black rounded-xl shadow-md p-4 h-[10rem] items-center flex">
+        <div className="absolute top-12 left-4 right-4 bg-white text-black rounded-xl shadow-md p-4 h-[10rem] items-center flex justify-between">
           <div className="content">
             <p className="text-md font-semibold mb-1">
               Halo, {userName || 'Pengguna'} 💚
@@ -152,7 +152,7 @@ export default function CourseDashboard() {
           </div>
 
           <div className="content">
-            <img src={doktor} alt="Doktor" className="w-80 rounded-full ml-4" />
+            <img src={doktor} alt="Doktor" className="w-80 sm:w-80 md:w-32 lg:w-32 rounded-full ml-4 aright-0" />
           </div>
         </div>
       </div>

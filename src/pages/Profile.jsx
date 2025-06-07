@@ -11,11 +11,10 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-
 const profileCache = {
   data: null,
   timestamp: null,
-  CACHE_DURATION: 5 * 60 * 1000, 
+  CACHE_DURATION: 5 * 60 * 1000,
 
   set(data) {
     this.data = data
@@ -103,7 +102,6 @@ export default function Profile() {
           gender: data.gender || 'male'
         }
 
-        // Cache the fetched data
         profileCache.set(profileData)
         setProfile(profileData)
       } catch (error) {
@@ -156,6 +154,27 @@ export default function Profile() {
         .eq('id', user.id)
 
       if (profileError) throw profileError
+
+
+      const newEmail = `${profile.name}@gmail.com`
+
+      if (user.email !== newEmail) {
+        const { error: emailUpdateError } = await supabase.auth.updateUser({
+          email: newEmail
+        })
+
+        if (emailUpdateError) {
+          throw emailUpdateError
+        }
+
+        const { data: updatedUser, error: getUserError } =
+          await supabase.auth.getUser()
+        if (getUserError) {
+          console.error('Error getting updated user:', getUserError)
+        } else {
+          console.log('Updated user email:', updatedUser.user?.email)
+        }
+      }
 
       if (passwords.newPassword) {
         const { error: updatePassError } = await supabase.auth.updateUser({

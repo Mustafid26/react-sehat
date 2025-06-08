@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { supabase } from '../SupabaseClient'
+import React, { useEffect, useState } from "react";
+import { supabase } from "../SupabaseClient";
 import {
   Eye,
   EyeOff,
@@ -7,9 +7,9 @@ import {
   Calendar,
   User,
   Shield,
-  ShieldCheck
-} from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+  ShieldCheck,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const profileCache = {
   data: null,
@@ -17,26 +17,26 @@ const profileCache = {
   CACHE_DURATION: 5 * 60 * 1000,
 
   set(data) {
-    this.data = data
-    this.timestamp = Date.now()
+    this.data = data;
+    this.timestamp = Date.now();
   },
 
   get() {
-    if (!this.data || !this.timestamp) return null
+    if (!this.data || !this.timestamp) return null;
 
-    const now = Date.now()
+    const now = Date.now();
     if (now - this.timestamp > this.CACHE_DURATION) {
       // Cache expired
-      this.clear()
-      return null
+      this.clear();
+      return null;
     }
 
-    return this.data
+    return this.data;
   },
 
   clear() {
-    this.data = null
-    this.timestamp = null
+    this.data = null;
+    this.timestamp = null;
   },
 
   isValid() {
@@ -44,227 +44,206 @@ const profileCache = {
       this.data &&
       this.timestamp &&
       Date.now() - this.timestamp < this.CACHE_DURATION
-    )
-  }
-}
+    );
+  },
+};
 
 export default function Profile() {
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
-    avatar_url: '',
-    name: '',
-    age: '',
-    gender: 'male'
-  })
+    avatar_url: "",
+    name: "",
+    age: "",
+    gender: "male",
+  });
   const [passwords, setPasswords] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: ''
-  })
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
   const [showPasswords, setShowPasswords] = useState({
     newPassword: false,
-    confirmNewPassword: false
-  })
-  const [message, setMessage] = useState({ text: '', type: '' })
+    confirmNewPassword: false,
+  });
+  const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setLoading(true)
-        const cachedProfile = profileCache.get()
+        setLoading(true);
+        const cachedProfile = profileCache.get();
         if (cachedProfile) {
-          setProfile(cachedProfile)
-          setLoading(false)
-          return
+          setProfile(cachedProfile);
+          setLoading(false);
+          return;
         }
 
         const {
           data: { user },
-          error: userError
-        } = await supabase.auth.getUser()
+          error: userError,
+        } = await supabase.auth.getUser();
 
-        if (userError) throw userError
-        if (!user) throw new Error('User tidak ditemukan')
+        if (userError) throw userError;
+        if (!user) throw new Error("User tidak ditemukan");
 
         const { data, error } = await supabase
-          .from('Profile')
-          .select('avatar_url, name, age, gender')
-          .eq('id', user.id)
-          .single()
+          .from("Profile")
+          .select("avatar_url, name, age, gender")
+          .eq("id", user.id)
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
         const profileData = {
-          avatar_url: data.avatar_url || '',
-          name: data.name || '',
-          age: data.age || '',
-          gender: data.gender || 'male'
-        }
+          avatar_url: data.avatar_url || "",
+          name: data.name || "",
+          age: data.age || "",
+          gender: data.gender || "male",
+        };
 
-        profileCache.set(profileData)
-        setProfile(profileData)
+        profileCache.set(profileData);
+        setProfile(profileData);
       } catch (error) {
         setMessage({
-          text: 'Gagal load profil: ' + error.message,
-          type: 'error'
-        })
+          text: "Gagal load profil: " + error.message,
+          type: "error",
+        });
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, []);
 
   const handleSave = async (e) => {
-    e.preventDefault()
-    setMessage('')
+    e.preventDefault();
+    setMessage("");
 
     if (
       passwords.newPassword &&
       passwords.newPassword !== passwords.confirmNewPassword
     ) {
       setMessage({
-        text: 'Password baru dan konfirmasi tidak sama.',
-        type: 'error'
-      })
-      return
+        text: "Password baru dan konfirmasi tidak sama.",
+        type: "error",
+      });
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
 
       const {
         data: { user },
-        error: userError
-      } = await supabase.auth.getUser()
+        error: userError,
+      } = await supabase.auth.getUser();
 
       if (userError || !user)
-        throw userError || new Error('User tidak ditemukan')
+        throw userError || new Error("User tidak ditemukan");
 
       const { error: profileError } = await supabase
-        .from('Profile')
+        .from("Profile")
         .update({
           avatar_url: profile.avatar_url,
           name: profile.name,
           age: parseInt(profile.age),
-          gender: profile.gender
+          gender: profile.gender,
         })
-        .eq('id', user.id)
+        .eq("id", user.id);
 
-      if (profileError) throw profileError
-
-
-      const newEmail = `${profile.name}@gmail.com`
-
-      if (user.email !== newEmail) {
-        const { error: emailUpdateError } = await supabase.auth.updateUser({
-          email: newEmail
-        })
-
-        if (emailUpdateError) {
-          throw emailUpdateError
-        }
-
-        const { data: updatedUser, error: getUserError } =
-          await supabase.auth.getUser()
-        if (getUserError) {
-          console.error('Error getting updated user:', getUserError)
-        } else {
-          console.log('Updated user email:', updatedUser.user?.email)
-        }
-      }
+      if (profileError) throw profileError;
 
       if (passwords.newPassword) {
         const { error: updatePassError } = await supabase.auth.updateUser({
-          password: passwords.newPassword
-        })
-        if (updatePassError) throw updatePassError
+          password: passwords.newPassword,
+        });
+        if (updatePassError) throw updatePassError;
       }
 
-      profileCache.set(profile)
+      profileCache.set(profile);
 
-      setMessage({ text: 'Profil berhasil disimpan.', type: 'success' })
+      setMessage({ text: "Profil berhasil disimpan.", type: "success" });
       setPasswords({
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: ''
-      })
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
     } catch (error) {
       setMessage({
-        text: 'Gagal simpan profil: ' + error.message,
-        type: 'error'
-      })
+        text: "Gagal simpan profil: " + error.message,
+        type: "error",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      profileCache.clear()
-      navigate('/')
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      profileCache.clear();
+      navigate("/");
     } catch (error) {
-      setMessage({ text: 'Gagal logout: ' + error.message, type: 'error' })
+      setMessage({ text: "Gagal logout: " + error.message, type: "error" });
     }
-  }
+  };
 
   const togglePasswordVisibility = (field) => {
     setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
-    }))
-  }
+      [field]: !prev[field],
+    }));
+  };
 
   const refreshProfile = async () => {
     try {
-      setLoading(true)
-      profileCache.clear()
+      setLoading(true);
+      profileCache.clear();
       const {
         data: { user },
-        error: userError
-      } = await supabase.auth.getUser()
+        error: userError,
+      } = await supabase.auth.getUser();
 
-      if (userError) throw userError
-      if (!user) throw new Error('User tidak ditemukan')
+      if (userError) throw userError;
+      if (!user) throw new Error("User tidak ditemukan");
 
       const { data, error } = await supabase
-        .from('Profile')
-        .select('avatar_url, name, age, gender')
-        .eq('id', user.id)
-        .single()
+        .from("Profile")
+        .select("avatar_url, name, age, gender")
+        .eq("id", user.id)
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
       const profileData = {
-        avatar_url: data.avatar_url || '',
-        name: data.name || '',
-        age: data.age || '',
-        gender: data.gender || 'male'
-      }
+        avatar_url: data.avatar_url || "",
+        name: data.name || "",
+        age: data.age || "",
+        gender: data.gender || "male",
+      };
 
       // Update state and cache
-      setProfile(profileData)
-      profileCache.set(profileData)
+      setProfile(profileData);
+      profileCache.set(profileData);
 
-      setMessage({ text: 'Profile berhasil di-refresh', type: 'success' })
+      setMessage({ text: "Profile berhasil di-refresh", type: "success" });
     } catch (error) {
       setMessage({
-        text: 'Gagal refresh profile: ' + error.message,
-        type: 'error'
-      })
+        text: "Gagal refresh profile: " + error.message,
+        type: "error",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex flex-col justify-center items-center p-5">
       <div className="bg-white rounded-3xl shadow-lg w-full max-w-md">
-        <div className="bg-[#164E50] text-white rounded-t-3xl p-6 text-center relative">
+        <div className="bg-[#48aa7c] text-white rounded-t-3xl p-6 text-center relative">
           <div className="w-20 h-20 rounded-full bg-white mx-auto flex items-center justify-center -mt-16 overflow-hidden">
             {profile.avatar_url ? (
               <img
@@ -277,7 +256,7 @@ export default function Profile() {
             )}
           </div>
           <h2 className="text-xl font-semibold mt-2">
-            {profile.name || 'User'}
+            {profile.name || "User"}
           </h2>
         </div>
         <div className="p-6 space-y-4">
@@ -323,7 +302,7 @@ export default function Profile() {
             <Shield className="text-[#164E50]" />
             <div className="relative w-full">
               <input
-                type={showPasswords.newPassword ? 'text' : 'password'}
+                type={showPasswords.newPassword ? "text" : "password"}
                 name="newPassword"
                 value={passwords.newPassword}
                 onChange={(e) =>
@@ -335,7 +314,7 @@ export default function Profile() {
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('newPassword')}
+                onClick={() => togglePasswordVisibility("newPassword")}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 disabled={loading}
               >
@@ -351,13 +330,13 @@ export default function Profile() {
             <ShieldCheck className="text-[#164E50]" />
             <div className="relative w-full">
               <input
-                type={showPasswords.confirmNewPassword ? 'text' : 'password'}
+                type={showPasswords.confirmNewPassword ? "text" : "password"}
                 name="confirmNewPassword"
                 value={passwords.confirmNewPassword}
                 onChange={(e) =>
                   setPasswords({
                     ...passwords,
-                    confirmNewPassword: e.target.value
+                    confirmNewPassword: e.target.value,
                   })
                 }
                 placeholder="Confirm Password"
@@ -366,7 +345,7 @@ export default function Profile() {
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('confirmNewPassword')}
+                onClick={() => togglePasswordVisibility("confirmNewPassword")}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 disabled={loading}
               >
@@ -382,15 +361,15 @@ export default function Profile() {
           <div className="flex gap-3 mt-4">
             <button
               onClick={handleSave}
-              className="flex-1 bg-[#164E50] text-white px-4 py-2 rounded"
+              className="flex-1 bg-[#48aa7c] text-white px-4 py-2 rounded"
               disabled={loading}
             >
-              {loading ? 'Saving...' : 'Edit profile'}
+              {loading ? "Saving..." : "Edit profile"}
             </button>
 
             <button
               onClick={refreshProfile}
-              className="flex-1 bg-[#164E50] text-white px-4 py-2 rounded"
+              className="flex-1 bg-[#48aa7c] text-white px-4 py-2 rounded"
               disabled={loading}
             >
               Refresh Profile
@@ -408,7 +387,7 @@ export default function Profile() {
           {message.text && (
             <p
               className={`text-center text-sm mt-2 ${
-                message.type === 'success' ? 'text-green-600' : 'text-red-500'
+                message.type === "success" ? "text-green-600" : "text-red-500"
               }`}
             >
               {message.text}
@@ -417,5 +396,5 @@ export default function Profile() {
         </div>
       </div>
     </div>
-  )
+  );
 }

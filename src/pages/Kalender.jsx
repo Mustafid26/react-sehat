@@ -1,42 +1,42 @@
-import { useState } from 'react'
-import { CalendarDaysIcon } from '@heroicons/react/24/outline'
-import { motion } from 'framer-motion'
-import dayjs from 'dayjs'
-import { ArrowLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import Doktor from '/img/docter-min.png'
-import tipsKehamilan from '../components/TipsKehamilan'
+import { useState } from "react";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
+import dayjs from "dayjs";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Doktor from "/img/docter-min.png";
+import tipsKehamilan from "../components/TipsKehamilan";
 
 export default function Kalender() {
-  const navigate = useNavigate()
-  const [hpht, setHpht] = useState('')
-  const [result, setResult] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [hpht, setHpht] = useState("");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleCalculate = () => {
-    if (!hpht) return
-    setLoading(true)
-    setResult(null)
+    if (!hpht) return;
+    setLoading(true);
+    setResult(null);
 
     setTimeout(() => {
-      const hphtDate = dayjs(hpht)
-      const hpl = hphtDate.add(280, 'day')
-      const weeks = dayjs().diff(hphtDate, 'week')
+      const hphtDate = dayjs(hpht);
+      const hpl = hphtDate.add(280, "day");
+      const weeks = dayjs().diff(hphtDate, "week");
 
       setResult({
-        hpl: hpl.format('dddd, DD MMMM YYYY'),
-        weeks
-      })
-      setLoading(false)
-    }, 1000)
-  }
+        hpl: hpl.format("dddd, DD MMMM YYYY"),
+        weeks,
+      });
+      setLoading(false);
+    }, 1000);
+  };
 
   const handleBack = () => {
-    navigate('/home')
-  }
+    navigate("/home");
+  };
 
   const currentTips =
-    result && tipsKehamilan.find((item) => item.minggu === result.weeks)
+    result && tipsKehamilan.find((item) => item.minggu === result.weeks);
 
   return (
     <>
@@ -68,9 +68,9 @@ export default function Kalender() {
 
           <button
             onClick={handleCalculate}
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition duration-300"
+            className="w-full bg-[#88DE7C] hover:bg-[#48aa7c] text-white py-2 rounded-lg transition duration-300"
           >
-            {loading ? 'Menghitung...' : 'Hitung Kehamilan'}
+            {loading ? "Menghitung..." : "Hitung Kehamilan"}
           </button>
 
           {result && !loading && (
@@ -112,5 +112,5 @@ export default function Kalender() {
         </div>
       </div>
     </>
-  )
+  );
 }

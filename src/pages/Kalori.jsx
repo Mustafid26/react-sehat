@@ -1,78 +1,78 @@
-import React, { useState, useEffect } from 'react'
-import { ArrowLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../SupabaseClient'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../SupabaseClient";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function KalkulatorKalori() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [tinggi, setTinggi] = useState('')
-  const [berat, setBerat] = useState('')
-  const [usia, setUsia] = useState('')
-  const [gender, setGender] = useState('')
-  const [faktorAktivitas, setFaktorAktivitas] = useState(null)
-  const [showModal, setShowModal] = useState(false)
-  const [hasilKalori, setHasilKalori] = useState(null)
-  const [userName, setUserName] = useState('')
+  const [tinggi, setTinggi] = useState("");
+  const [berat, setBerat] = useState("");
+  const [usia, setUsia] = useState("");
+  const [gender, setGender] = useState("");
+  const [faktorAktivitas, setFaktorAktivitas] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [hasilKalori, setHasilKalori] = useState(null);
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const { data: user, error: userError } = await supabase.auth.getUser()
+      const { data: user, error: userError } = await supabase.auth.getUser();
 
       if (userError) {
-        console.error('Error getting user:', userError.message)
-        return
+        console.error("Error getting user:", userError.message);
+        return;
       }
 
       if (user && user.user) {
         const { data: profile, error: profileError } = await supabase
-          .from('Profile')
-          .select('age, gender, name')
-          .eq('id', user.user.id)
-          .single()
+          .from("Profile")
+          .select("age, gender, name")
+          .eq("id", user.user.id)
+          .single();
 
         if (profileError) {
-          console.error('Error fetching profile:', profileError.message)
-          return
+          console.error("Error fetching profile:", profileError.message);
+          return;
         }
 
         if (profile) {
-          setUsia(profile.age || '')
-          setGender(profile.gender || '')
-          setUserName(profile.name || 'Pengguna')
+          setUsia(profile.age || "");
+          setGender(profile.gender || "");
+          setUserName(profile.name || "Pengguna");
         }
       }
-    }
+    };
 
-    fetchUserProfile()
-  }, [])
+    fetchUserProfile();
+  }, []);
 
   const handleBack = () => {
-    navigate('/home')
-  }
+    navigate("/home");
+  };
 
   const hitungKalori = () => {
     if (!tinggi || !berat || !usia || !gender || faktorAktivitas === null) {
-      alert('Mohon lengkapi semua inputan dan pilih faktor aktivitas.')
-      return
+      alert("Mohon lengkapi semua inputan dan pilih faktor aktivitas.");
+      return;
     }
 
-    const bb = parseFloat(berat)
-    const tb = parseFloat(tinggi)
-    const u = parseFloat(usia)
+    const bb = parseFloat(berat);
+    const tb = parseFloat(tinggi);
+    const u = parseFloat(usia);
 
-    let bmr = 0
+    let bmr = 0;
 
-    if (gender === 'male') {
-      bmr = 66.473 + 13.752 * bb + 5.003 * tb - 6.755 * u
-    } else if (gender === 'female') {
-      bmr = 655.096 + 9.56 * bb + 1.85 * tb - 4.67 * u
+    if (gender === "male") {
+      bmr = 66.473 + 13.752 * bb + 5.003 * tb - 6.755 * u;
+    } else if (gender === "female") {
+      bmr = 655.096 + 9.56 * bb + 1.85 * tb - 4.67 * u;
     }
 
-    const totalKalori = bmr * faktorAktivitas
-    setHasilKalori(totalKalori.toFixed(2))
-  }
+    const totalKalori = bmr * faktorAktivitas;
+    setHasilKalori(totalKalori.toFixed(2));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex flex-col items-center justify-center p-4 relative mb-10">
@@ -86,7 +86,7 @@ export default function KalkulatorKalori() {
       </button>
 
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md space-y-6 mt-12 mb-8">
-        {' '}
+        {" "}
         {/* mt-12 untuk memberi ruang tombol back */}
         <h1 className="text-2xl font-bold text-center text-[#164E50]">
           Kalkulator Kebutuhan Kalori
@@ -154,18 +154,18 @@ export default function KalkulatorKalori() {
           </label>
           <button
             onClick={() => setShowModal(true)}
-            className="w-full bg-green-500 text-white font-semibold py-2 rounded-xl hover:bg-green-600 transition"
+            className="w-full bg-[#88de7c] text-white font-semibold py-2 rounded-xl hover:bg-[#48aa7c] transition"
           >
-            Pilih Faktor Aktivitas{' '}
+            Pilih Faktor Aktivitas{" "}
             {faktorAktivitas
-              ? `(${faktorAktivitas === 1.2 ? 'Bed Rest' : 'Beraktivitas'})`
-              : ''}
+              ? `(${faktorAktivitas === 1.2 ? "Bed Rest" : "Beraktivitas"})`
+              : ""}
           </button>
         </div>
         {/* Tombol Hitung */}
         <button
           onClick={hitungKalori}
-          className="w-full bg-[#164E50] text-white font-semibold py-2 rounded-xl hover:bg-[#133e3f] transition"
+          className="w-full bg-[#88de7c] text-white font-semibold py-2 rounded-xl hover:bg-[#48aa7c] transition"
         >
           Hitung Kebutuhan Kalori
         </button>
@@ -180,18 +180,18 @@ export default function KalkulatorKalori() {
             </h2>
             <button
               onClick={() => {
-                setFaktorAktivitas(1.2)
-                setShowModal(false)
+                setFaktorAktivitas(1.2);
+                setShowModal(false);
               }}
               className="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition"
             >
-              Bed Rest <br></br>(Tidak dapat melakukan aktivitas, dan hanya berbaring di
-              tempat tidur)
+              Bed Rest <br></br>(Tidak dapat melakukan aktivitas, dan hanya
+              berbaring di tempat tidur)
             </button>
             <button
               onClick={() => {
-                setFaktorAktivitas(1.3)
-                setShowModal(false)
+                setFaktorAktivitas(1.3);
+                setShowModal(false);
               }}
               className="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition"
             >
@@ -214,7 +214,7 @@ export default function KalkulatorKalori() {
             initial={{ opacity: 0, y: 50 }} // Mulai dari tidak terlihat dan 50px di bawah
             animate={{ opacity: 1, y: 0 }} // Berakhir di posisi normal
             exit={{ opacity: 0, y: 50 }} // Kembali ke posisi awal saat hilang
-            transition={{ duration: 0.5, ease: 'easeOut' }} // Durasi dan jenis transisi
+            transition={{ duration: 0.5, ease: "easeOut" }} // Durasi dan jenis transisi
             className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md text-center text-[#164E50] font-semibold mt-6 mb-32"
           >
             <p className="text-xl">Halo {userName}</p>
@@ -241,5 +241,5 @@ export default function KalkulatorKalori() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

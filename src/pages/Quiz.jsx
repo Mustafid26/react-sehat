@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import allQuestions from "../components/Question"; // Your question data source
 
-// --- Icons from your original UI ---
 const ChevronLeftIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +209,7 @@ export default function Quiz() {
                   setCategory(cat);
                   setStep("quiz");
                 }}
-                className="w-full py-4 bg-[#88de7c] text-white rounded-xl font-bold hover:bg-orange-500 transition"
+                className="w-full py-4 bg-[#88de7c] text-white rounded-xl font-bold hover:bg-[#48aa7c] transition"
               >
                 {cat}
               </button>

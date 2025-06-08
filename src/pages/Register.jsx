@@ -1,65 +1,95 @@
-import { useState } from 'react'
-import { supabase } from '../SupabaseClient'
-import { useNavigate, Link } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState } from "react";
+import { supabase } from "../SupabaseClient";
+import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
-  const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
-    name: '',
-    age: '',
-    gender: '',
-    password: ''
-  })
-  const [message, setMessage] = useState('')
+    name: "",
+    display_name: "",
+    age: "",
+    gender: "",
+    password: "",
+  });
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleRegister = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setMessage("");
+
     try {
-      const username = form.name.trim().toLowerCase().replace(/\s+/g, '')
-      const email = `${username}@gmail.com`
-      const password = form.password
+      if (
+        !form.name ||
+        !form.display_name ||
+        !form.age ||
+        !form.gender ||
+        !form.password
+      ) {
+        throw new Error("Mohon lengkapi semua data pendaftaran.");
+      }
+
+      const emailUsername = form.display_name.trim().toLowerCase().replace(/\s+/g, "");
+      const email = `${emailUsername}@gmail.com`;
+      const password = form.password;
 
       const { data: authData, error: signUpError } = await supabase.auth.signUp(
         {
           email,
-          password
+          password,
+          options: {
+            data: {
+              display_name: form.display_name,
+            },
+          },
         }
-      )
+      );
 
-      if (signUpError) throw signUpError
+      if (signUpError) throw signUpError;
+      if (!authData?.user)
+        throw new Error(
+          "Registrasi berhasil, tetapi data user tidak ditemukan. Silakan login ulang."
+        );
 
-      const userId = authData?.user?.id
+      const userId = authData.user.id;
       if (userId) {
-        const { error: profileError } = await supabase.from('Profile').insert({
+        const { error: profileError } = await supabase.from("Profile").insert({
           id: userId,
           name: form.name,
           age: parseInt(form.age),
           gender: form.gender,
-          created_at: new Date().toISOString()
-        })
+          created_at: new Date().toISOString(),
+        });
 
-        if (profileError) throw profileError
+        if (profileError) {
+          console.error("Error saving profile data:", profileError);
+          setMessage(
+            "Registrasi berhasil, tetapi gagal menyimpan data profil. Silakan coba login atau hubungi dukungan."
+          );
+          return;
+        }
 
-        navigate('/home')
+        setMessage("Registrasi berhasil!");
+        navigate("/home");
       }
     } catch (error) {
-      setMessage('Error: ' + error.message)
+      setMessage("Error registrasi: " + error.message);
+      console.error("Registration Error:", error);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#88DE7C] to-white p-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6">
         <h2 className="text-2xl font-bold mb-2">Register</h2>
         <p className="text-sm text-gray-500 mb-6">
-          Sudah punya akun?{' '}
+          Sudah punya akun?{" "}
           <Link to="/" className="text-[#164E50] font-semibold">
             Login
           </Link>
@@ -70,10 +100,23 @@ export default function Register() {
             <input
               type="text"
               name="name"
-              placeholder="Nama"
+              placeholder="Nama Lengkap"
               value={form.name}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <input
+              type="text"
+              name="display_name"
+              placeholder="Username"
+              value={form.display_name}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
+              required
             />
           </div>
 
@@ -85,6 +128,7 @@ export default function Register() {
               value={form.age}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
+              required
             />
           </div>
 
@@ -94,7 +138,9 @@ export default function Register() {
               value={form.gender}
               onChange={handleChange}
               className="appearance-none w-full bg-white border border-gray-300 rounded-full py-3 px-4 pr-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-500"
+              required
             >
+              <option value="" disabled>Pilih Gender</option>
               <option value="female">Perempuan</option>
               <option value="male">Laki-Laki</option>
             </select>
@@ -116,12 +162,13 @@ export default function Register() {
 
           <div className="mb-6 relative">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-green-300"
+              required
             />
             <button
               type="button"
@@ -159,5 +206,5 @@ export default function Register() {
         )}
       </div>
     </div>
-  )
+  );
 }

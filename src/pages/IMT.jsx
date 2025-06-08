@@ -1,69 +1,69 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { supabase } from '../SupabaseClient'
-import { useNavigate } from 'react-router-dom'
-import { IMTContext } from '../context/IMTContext'
-import { ArrowLeft } from 'lucide-react'
+import React, { useState, useEffect, useContext } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { supabase } from "../SupabaseClient";
+import { useNavigate } from "react-router-dom";
+import { IMTContext } from "../context/IMTContext";
+import { ArrowLeft } from "lucide-react";
 
 export default function IMTModern() {
-  const navigate = useNavigate()
-  const { setImtData } = useContext(IMTContext)
-  const [nama, setNama] = useState('Pengguna')
-  const [tinggi, setTinggi] = useState('')
-  const [berat, setBerat] = useState('')
-  const [hasil, setHasil] = useState('')
+  const navigate = useNavigate();
+  const { setImtData } = useContext(IMTContext);
+  const [nama, setNama] = useState("Pengguna");
+  const [tinggi, setTinggi] = useState("");
+  const [berat, setBerat] = useState("");
+  const [hasil, setHasil] = useState("");
 
   useEffect(() => {
     async function fetchUserProfile() {
       try {
         const {
           data: { user },
-          error: userError
-        } = await supabase.auth.getUser()
+          error: userError,
+        } = await supabase.auth.getUser();
 
-        if (userError) throw userError
-        if (!user) return
+        if (userError) throw userError;
+        if (!user) return;
 
-        const userId = user.id
+        const userId = user.id;
 
         const { data: profileData, error: profileError } = await supabase
-          .from('Profile')
-          .select('name')
-          .eq('id', userId)
-          .single()
+          .from("Profile")
+          .select("name")
+          .eq("id", userId)
+          .single();
 
-        if (profileError) throw profileError
+        if (profileError) throw profileError;
 
-        setNama(profileData?.name || 'Pengguna')
+        setNama(profileData?.name || "Pengguna");
       } catch (error) {
-        console.error('Error fetching profile:', error.message)
+        console.error("Error fetching profile:", error.message);
       }
     }
 
-    fetchUserProfile()
-  }, [])
+    fetchUserProfile();
+  }, []);
 
   const hitungIMT = () => {
-    if (!tinggi || !berat) return
-    const tinggiMeter = tinggi / 100
-    const imt = berat / (tinggiMeter * tinggiMeter)
-    let kategori = ''
-    let beratSehat = (22 * tinggiMeter * tinggiMeter).toFixed(1)
+    if (!tinggi || !berat) return;
+    const tinggiMeter = tinggi / 100;
+    const imt = berat / (tinggiMeter * tinggiMeter);
+    let kategori = "";
+    let beratSehat = (22 * tinggiMeter * tinggiMeter).toFixed(1);
 
-    if (imt < 18.5) kategori = 'Berat badan kurang'
-    else if (imt < 24.9) kategori = 'Normal'
-    else if (imt < 29.9) kategori = 'Kelebihan berat badan'
-    else kategori = 'Obesitas'
-    setHasil(`Halo ${nama}!\nIMT kamu: ${imt.toFixed(2)} kg/m² (${kategori})`)
-    setImtData({ nama, imt, kategori, beratSehat })
-  }
+    if (imt < 18.5) kategori = "Berat badan kurang";
+    else if (imt < 24.9) kategori = "Normal";
+    else if (imt < 29.9) kategori = "Kelebihan berat badan";
+    else kategori = "Obesitas";
+    setHasil(`Halo ${nama}!\nIMT kamu: ${imt.toFixed(2)} kg/m² (${kategori})`);
+    setImtData({ nama, imt, kategori, beratSehat });
+  };
 
   const goToAfterIMT = () => {
-    navigate('/after-imt')
-  }
+    navigate("/after-imt");
+  };
   const handleBack = () => {
-    navigate('/home')
-  }
+    navigate("/home");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex items-center justify-center px-4 py-8 relative">
@@ -107,7 +107,7 @@ export default function IMTModern() {
 
         <button
           onClick={hitungIMT}
-          className="w-full bg-[#164E50] text-white font-semibold py-2 rounded-xl hover:bg-[#133e3f] transition"
+          className="w-full bg-[#88de7c] text-white font-semibold py-2 rounded-xl hover:bg-[#48aa7c] transition"
         >
           Hitung IMT
         </button>
@@ -133,5 +133,5 @@ export default function IMTModern() {
         </AnimatePresence>
       </div>
     </div>
-  )
+  );
 }

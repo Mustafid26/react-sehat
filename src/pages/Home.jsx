@@ -34,7 +34,6 @@ const HeaderBackground = () => (
   </div>
 );
 
-// Logika Caching dan State Management - TIDAK BERUBAH
 const cache = {
   userProfile: null,
   berita: { data: null, timestamp: null, page: 1 },

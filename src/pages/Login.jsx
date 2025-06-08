@@ -1,43 +1,57 @@
-import { useState } from 'react'
-import { supabase } from '../SupabaseClient'
-import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState } from "react";
+import { supabase } from "../SupabaseClient";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', password: '' })
-  const [message, setMessage] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ display_name: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleLogin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setMessage("");
+
     try {
-      const username = form.name.trim().toLowerCase().replace(/\s+/g, '')
-      const email = `${username}@gmail.com`
+      if (!form.display_name || !form.password) {
+        throw new Error("Mohon masukkan display name dan password Anda.");
+      }
+
+      const emailUsername = form.display_name
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "");
+      const email = `${emailUsername}@gmail.com`;
 
       const { error } = await supabase.auth.signInWithPassword({
         email,
-        password: form.password
-      })
+        password: form.password,
+      });
 
-      if (error) throw error
+      if (error) {
+        throw new Error(
+          "Display name atau password salah. Silakan cek kembali."
+        );
+      }
 
-      navigate('/home')
+      navigate("/home");
     } catch (error) {
-      setMessage('Login gagal: ' + error.message)
+      setMessage("Login gagal: " + error.message);
+      console.error("Login Error:", error);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#88DE7C] to-white p-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6">
         <h2 className="text-2xl font-bold mb-2">Login</h2>
         <p className="text-sm text-gray-500 mb-6">
-          Belum punya akun?{' '}
+          Belum punya akun?{" "}
           <Link to="/register" className="text-[#164E50] font-semibold">
             Daftar sekarang
           </Link>
@@ -47,22 +61,24 @@ export default function Login() {
           <div className="mb-4">
             <input
               type="text"
-              name="name"
-              placeholder="Nama"
-              value={form.name}
+              name="display_name"
+              placeholder="Username"
+              value={form.display_name}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-300"
+              required
             />
           </div>
 
           <div className="mb-6 relative">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-green-300"
+              required
             />
             <button
               type="button"
@@ -100,5 +116,5 @@ export default function Login() {
         )}
       </div>
     </div>
-  )
+  );
 }

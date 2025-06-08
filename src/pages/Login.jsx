@@ -16,7 +16,8 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const email = `${form.name}@gmail.com`
+      const username = form.name.trim().toLowerCase().replace(/\s+/g, '')
+      const email = `${username}@gmail.com`
 
       const { error } = await supabase.auth.signInWithPassword({
         email,

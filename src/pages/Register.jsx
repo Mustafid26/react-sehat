@@ -47,7 +47,6 @@ export default function Register() {
 
         if (profileError) throw profileError
 
-        setMessage('Registrasi berhasil!')
         navigate('/home')
       }
     } catch (error) {

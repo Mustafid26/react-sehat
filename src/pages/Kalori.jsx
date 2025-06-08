@@ -75,7 +75,7 @@ export default function KalkulatorKalori() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex flex-col items-center justify-center p-4 relative">
+    <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex flex-col items-center justify-center p-4 relative mb-10">
       {/* Tombol Kembali */}
       <button
         onClick={handleBack}
@@ -185,7 +185,7 @@ export default function KalkulatorKalori() {
               }}
               className="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition"
             >
-              Bed Rest (Tidak dapat melakukan aktivitas, dan hanya berbaring di
+              Bed Rest <br></br>(Tidak dapat melakukan aktivitas, dan hanya berbaring di
               tempat tidur)
             </button>
             <button
@@ -199,7 +199,7 @@ export default function KalkulatorKalori() {
             </button>
             <button
               onClick={() => setShowModal(false)}
-              className="w-full mt-2 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
+              className="w-full mt-2 bg-[#164E50] text-white font-semibold py-2 rounded-xl hover:bg-[#133e3f] transition"
             >
               Batal
             </button>
@@ -217,7 +217,7 @@ export default function KalkulatorKalori() {
             transition={{ duration: 0.5, ease: 'easeOut' }} // Durasi dan jenis transisi
             className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md text-center text-[#164E50] font-semibold mt-6 mb-32"
           >
-            <p className="text-xl">HALLO {userName.toUpperCase()}</p>
+            <p className="text-xl">Halo {userName}</p>
             <p className="text-lg mt-2">
               Kebutuhan kalori kamu dalam sehari sebanyak {hasilKalori} KKAL
             </p>

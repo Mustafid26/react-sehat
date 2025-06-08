@@ -1,5 +1,3 @@
-// tipsKehamilan.js
-
 const tipsKehamilan = [
   {
     minggu: 0,

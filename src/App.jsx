@@ -7,6 +7,7 @@ import Kalender from './pages/Kalender'
 import DetailIMT from './pages/DetailMateri'
 import Register from './pages/Register'
 import Kalori from './pages/Kalori'
+import Quiz from './pages/Quiz'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
@@ -120,6 +121,7 @@ function App() {
         <Route path="/details/:judul" element={<DetailIMT />} />
         <Route path="/kalender" element={<Kalender />} />
         <Route path="/kalori" element={<Kalori />} />
+        <Route path="/quiz" element={<Quiz />} />
       </Routes>
 
       {!hideBottomBar && <BottomBar />}

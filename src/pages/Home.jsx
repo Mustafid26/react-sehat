@@ -103,8 +103,8 @@ export default function CourseDashboard() {
     }
   }
 
-  const fetchBerita = async (pageNumber = 1, forceRefresh = false) => {
-    if (pageNumber === 1 && !forceRefresh && isCacheValid('berita')) {
+  const fetchBerita = async (pageNumber = 5, forceRefresh = false) => {
+    if (pageNumber === 5 && !forceRefresh && isCacheValid('berita')) {
       setArticles(cache.berita.data)
       setPage(cache.berita.page)
       setLoading(false)
@@ -116,9 +116,9 @@ export default function CourseDashboard() {
         `https://newsapi.org/v2/everything?q=kesehatan&language=id&pageSize=4&page=${pageNumber}&apiKey=${apiKey}`
       )
       const data = await response.json()
-      if (pageNumber === 1) {
+      if (pageNumber === 5) {
         setArticles(data.articles)
-        cache.berita = { data: data.articles, timestamp: Date.now(), page: 1 }
+        cache.berita = { data: data.articles, timestamp: Date.now(), page: 5 }
       } else {
         setArticles((prev) => [...prev, ...data.articles])
       }

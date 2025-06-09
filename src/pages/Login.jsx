@@ -80,7 +80,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#88DE7C] to-white p-4">
       <BackgroundWaveSVG />
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6 z-10">
         <h2 className="text-2xl font-bold mb-2">Login</h2>
         <p className="text-sm text-gray-500 mb-6">
           Belum punya akun?{' '}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import allQuestions from '../components/Question'
 import { supabase } from '../SupabaseClient'
-import Confetti from 'react-confetti' // Pastikan ini diimpor dengan benar
+import Confetti from 'react-confetti' 
 
 const CheckIcon = () => (
   <svg
@@ -389,17 +389,16 @@ export default function Quiz() {
             {step === 'quiz' && category + ' Quiz'}
             {step === 'hasil' && 'Hasil Quiz'}
           </h1>
-          <div className="absolute right-4">
+          <div className="absolute right-3 top-[5.5rem]">
             {step === 'quiz' && (
               <button
                 className="font-semibold text-lg text-[#88de7c]"
                 onClick={() => {
-                  // Saat di-skip di soal terakhir, tetap panggil finishQuiz
                   if (current + 1 < quiz.length) {
                     setCurrent((c) => c + 1)
                     setSelected(null)
                   } else {
-                    finishQuiz() // Jika skip soal terakhir, langsung selesaikan
+                    finishQuiz()
                   }
                 }}
               >

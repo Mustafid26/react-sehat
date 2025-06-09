@@ -1,28 +1,61 @@
-import { useState } from "react";
-import { supabase } from "../SupabaseClient";
-import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { useState } from 'react'
+import { supabase } from '../SupabaseClient'
+import { useNavigate, Link } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
+
+const BackgroundWaveSVG = () => (
+  <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+    {/* Wave pertama di atas */}
+    <svg
+      className="absolute top-0 left-0 w-full h-80"
+      viewBox="0 0 1440 320"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+    >
+      <path
+        fill="#48aa7c"
+        fillOpacity="0.5"
+        d="M0,96L60,112C120,128,240,160,360,165.3C480,171,600,149,720,128C840,107,960,85,1080,96C1200,107,1320,149,1380,170.7L1440,192L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
+      />
+    </svg>
+
+    {/* Wave ketiga di atas - layer paling dalam */}
+    <svg
+      className="absolute top-0 left-0 w-full h-64"
+      viewBox="0 0 1440 320"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+      style={{ transform: 'translateY(40px)' }}
+    >
+      <path
+        fill="#48aa7c"
+        fillOpacity="0.3"
+        d="M0,32L60,48C120,64,240,96,360,101.3C480,107,600,85,720,74.7C840,64,960,64,1080,80C1200,96,1320,128,1380,144L1440,160L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
+      />
+    </svg>
+  </div>
+)
 
 export default function Register() {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
 
   const [form, setForm] = useState({
-    name: "",
-    display_name: "",
-    age: "",
-    gender: "",
-    password: "",
-  });
-  const [message, setMessage] = useState("");
+    name: '',
+    display_name: '',
+    age: '',
+    gender: '',
+    password: ''
+  })
+  const [message, setMessage] = useState('')
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setMessage("");
+    e.preventDefault()
+    setMessage('')
 
     try {
       if (
@@ -32,12 +65,15 @@ export default function Register() {
         !form.gender ||
         !form.password
       ) {
-        throw new Error("Mohon lengkapi semua data pendaftaran.");
+        throw new Error('Mohon lengkapi semua data pendaftaran.')
       }
 
-      const emailUsername = form.display_name.trim().toLowerCase().replace(/\s+/g, "");
-      const email = `${emailUsername}@gmail.com`;
-      const password = form.password;
+      const emailUsername = form.display_name
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '')
+      const email = `${emailUsername}@gmail.com`
+      const password = form.password
 
       const { data: authData, error: signUpError } = await supabase.auth.signUp(
         {
@@ -45,51 +81,51 @@ export default function Register() {
           password,
           options: {
             data: {
-              display_name: form.display_name,
-            },
-          },
+              display_name: form.display_name
+            }
+          }
         }
-      );
+      )
 
-      if (signUpError) throw signUpError;
+      if (signUpError) throw signUpError
       if (!authData?.user)
         throw new Error(
-          "Registrasi berhasil, tetapi data user tidak ditemukan. Silakan login ulang."
-        );
+          'Registrasi berhasil, tetapi data user tidak ditemukan. Silakan login ulang.'
+        )
 
-      const userId = authData.user.id;
+      const userId = authData.user.id
       if (userId) {
-        const { error: profileError } = await supabase.from("Profile").insert({
+        const { error: profileError } = await supabase.from('Profile').insert({
           id: userId,
           name: form.name,
           age: parseInt(form.age),
           gender: form.gender,
-          created_at: new Date().toISOString(),
-        });
+          created_at: new Date().toISOString()
+        })
 
         if (profileError) {
-          console.error("Error saving profile data:", profileError);
+          console.error('Error saving profile data:', profileError)
           setMessage(
-            "Registrasi berhasil, tetapi gagal menyimpan data profil. Silakan coba login atau hubungi dukungan."
-          );
-          return;
+            'Registrasi berhasil, tetapi gagal menyimpan data profil. Silakan coba login atau hubungi dukungan.'
+          )
+          return
         }
 
-        setMessage("Registrasi berhasil!");
-        navigate("/home");
+        navigate('/home')
       }
     } catch (error) {
-      setMessage("Error registrasi: " + error.message);
-      console.error("Registration Error:", error);
+      setMessage('Error registrasi: ' + error.message)
+      console.error('Registration Error:', error)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#88DE7C] to-white p-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#88DE7C] to-white p-4 z-10">
+      <BackgroundWaveSVG />
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6 z-10">
         <h2 className="text-2xl font-bold mb-2">Register</h2>
         <p className="text-sm text-gray-500 mb-6">
-          Sudah punya akun?{" "}
+          Sudah punya akun?{' '}
           <Link to="/" className="text-[#164E50] font-semibold">
             Login
           </Link>
@@ -140,7 +176,9 @@ export default function Register() {
               className="appearance-none w-full bg-white border border-gray-300 rounded-full py-3 px-4 pr-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-500"
               required
             >
-              <option value="" disabled>Pilih Gender</option>
+              <option value="" disabled>
+                Pilih Gender
+              </option>
               <option value="female">Perempuan</option>
               <option value="male">Laki-Laki</option>
             </select>
@@ -162,7 +200,7 @@ export default function Register() {
 
           <div className="mb-6 relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
               value={form.password}
@@ -206,5 +244,5 @@ export default function Register() {
         )}
       </div>
     </div>
-  );
+  )
 }

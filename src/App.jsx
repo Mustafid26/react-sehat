@@ -18,7 +18,7 @@ function BottomBar() {
   const isActive = (path) => location.pathname === path
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-around py-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-around py-2 z-20">
       <Link
         to="/home"
         className={`flex flex-col items-center mb-1 ${

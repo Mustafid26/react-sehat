@@ -20,13 +20,13 @@ const Card = ({ title, children, onClick }) => (
 
 const getCategoryColor = (kategori) => {
   switch (kategori.toLowerCase()) {
-    case 'kurus':
+    case 'underweight':
       return '#3B82F6' // Blue
     case 'normal':
       return '#10B981' // Green
-    case 'gemuk':
+    case 'overweight':
       return '#F59E0B' // Yellow
-    case 'obesitas':
+    case 'obesity':
       return '#EF4444' // Red
     default:
       return '#6B7280' // Gray
@@ -73,7 +73,7 @@ const DashboardCards = () => {
   const indicatorPosition = getIndicatorPosition(imtData.imt)
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 mb-24">
+    <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-[#a3ebb1] p-8 mb-24">
       <button
         onClick={handleBack}
         className="mb-6 flex items-center text-[#164E50] font-semibold "
@@ -151,7 +151,7 @@ const DashboardCards = () => {
             <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
               <span className="text-center">
                 <div className="font-medium">0</div>
-                <div className="text-[10px]">Kurus</div>
+                <div className="text-[10px]">Underweight</div>
               </span>
               <span className="text-center">
                 <div className="font-medium">18.5</div>
@@ -159,11 +159,11 @@ const DashboardCards = () => {
               </span>
               <span className="text-center">
                 <div className="font-medium">25</div>
-                <div className="text-[10px]">Gemuk</div>
+                <div className="text-[10px]">Overweight</div>
               </span>
               <span className="text-center">
                 <div className="font-medium">30</div>
-                <div className="text-[10px]">Obesitas</div>
+                <div className="text-[10px]">Obesity</div>
               </span>
               <span className="text-center">
                 <div className="font-medium">40+</div>

@@ -210,7 +210,7 @@ export default function Quiz() {
                   setCategory(cat);
                   setStep("quiz");
                 }}
-                className="w-full py-4 bg-[#88de7c] text-white rounded-xl font-bold hover:bg-orange-500 transition"
+                className="w-full py-4 bg-[#88de7c] text-white rounded-xl font-bold hover:bg-[#48AA7C] transition"
               >
                 {cat}
               </button>
@@ -263,7 +263,7 @@ export default function Quiz() {
                     optionClass += " opacity-50";
                   }
                 } else {
-                  optionClass += " hover:bg-orange-50";
+                  optionClass += " hover:bg-green-100";
                 }
 
                 return (

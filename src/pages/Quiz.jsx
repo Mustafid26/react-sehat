@@ -81,9 +81,9 @@ export default function Quiz() {
 
   // Inisialisasi audio setelah komponen mount
   useEffect(() => {
-    correctAudio.current = new Audio('/sounds/correct.mp3')
+    correctAudio.current = new Audio('/sounds/true.mp3')
     wrongAudio.current = new Audio('/sounds/wrong.mp3')
-    themeAudio.current = new Audio('/sounds/quiz-theme.mp3')
+    themeAudio.current = new Audio('/sounds/themesong.mp3')
     if (themeAudio.current) {
       themeAudio.current.loop = true
       themeAudio.current.volume = 0.5

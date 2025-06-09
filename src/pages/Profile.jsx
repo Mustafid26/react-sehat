@@ -11,6 +11,39 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+const BackgroundWaveSVG = () => (
+  <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+    {/* Wave pertama di atas */}
+    <svg
+      className="absolute top-0 left-0 w-full h-80"
+      viewBox="0 0 1440 320"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+    >
+      <path
+        fill="#48aa7c"
+        fillOpacity="0.5"
+        d="M0,96L60,112C120,128,240,160,360,165.3C480,171,600,149,720,128C840,107,960,85,1080,96C1200,107,1320,149,1380,170.7L1440,192L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
+      />
+    </svg>
+
+    {/* Wave ketiga di atas - layer paling dalam */}
+    <svg
+      className="absolute top-0 left-0 w-full h-64"
+      viewBox="0 0 1440 320"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+      style={{ transform: 'translateY(40px)' }}
+    >
+      <path
+        fill="#48aa7c"
+        fillOpacity="0.3"
+        d="M0,32L60,48C120,64,240,96,360,101.3C480,107,600,85,720,74.7C840,64,960,64,1080,80C1200,96,1320,128,1380,144L1440,160L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
+      />
+    </svg>
+  </div>
+)
+
 const profileCache = {
   data: null,
   timestamp: null,
@@ -155,27 +188,6 @@ export default function Profile() {
 
       if (profileError) throw profileError
 
-
-      const newEmail = `${profile.name}@gmail.com`
-
-      if (user.email !== newEmail) {
-        const { error: emailUpdateError } = await supabase.auth.updateUser({
-          email: newEmail
-        })
-
-        if (emailUpdateError) {
-          throw emailUpdateError
-        }
-
-        const { data: updatedUser, error: getUserError } =
-          await supabase.auth.getUser()
-        if (getUserError) {
-          console.error('Error getting updated user:', getUserError)
-        } else {
-          console.log('Updated user email:', updatedUser.user?.email)
-        }
-      }
-
       if (passwords.newPassword) {
         const { error: updatePassError } = await supabase.auth.updateUser({
           password: passwords.newPassword
@@ -263,8 +275,9 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-white flex flex-col justify-center items-center p-5">
-      <div className="bg-white rounded-3xl shadow-lg w-full max-w-md">
-        <div className="bg-[#164E50] text-white rounded-t-3xl p-6 text-center relative">
+      <BackgroundWaveSVG />
+      <div className="bg-white rounded-3xl shadow-lg w-full max-w-md z-10">
+        <div className="bg-[#48aa7c] text-white rounded-t-3xl p-6 text-center relative z-10">
           <div className="w-20 h-20 rounded-full bg-white mx-auto flex items-center justify-center -mt-16 overflow-hidden">
             {profile.avatar_url ? (
               <img
@@ -382,7 +395,7 @@ export default function Profile() {
           <div className="flex gap-3 mt-4">
             <button
               onClick={handleSave}
-              className="flex-1 bg-[#164E50] text-white px-4 py-2 rounded"
+              className="flex-1 bg-[#48aa7c] text-white px-4 py-2 rounded"
               disabled={loading}
             >
               {loading ? 'Saving...' : 'Edit profile'}
@@ -390,7 +403,7 @@ export default function Profile() {
 
             <button
               onClick={refreshProfile}
-              className="flex-1 bg-[#164E50] text-white px-4 py-2 rounded"
+              className="flex-1 bg-[#48aa7c] text-white px-4 py-2 rounded"
               disabled={loading}
             >
               Refresh Profile

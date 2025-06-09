@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import doktor from '/img/docter-min.png';
-import { supabase } from '../SupabaseClient';
-import '../assets/style/Home.css'; // Anda mungkin perlu menyesuaikan style dari file ini
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import doktor from '/img/docter-min.png'
+import { supabase } from '../SupabaseClient'
+import '../assets/style/Home.css' // Anda mungkin perlu menyesuaikan style dari file ini
 
 // Komponen SVG Latar Belakang - TIDAK BERUBAH
 const HeaderBackground = () => (
@@ -32,123 +32,128 @@ const HeaderBackground = () => (
       ></path>
     </svg>
   </div>
-);
+)
 
-// Logika Caching dan State Management - TIDAK BERUBAH
 const cache = {
   userProfile: null,
-  berita: { data: null, timestamp: null, page: 1 },
-};
+  berita: { data: null, timestamp: null, page: 1 }
+}
 const CACHE_DURATION = {
   userProfile: 5 * 60 * 1000,
-  berita: 10 * 60 * 1000,
-};
+  berita: 10 * 60 * 1000
+}
 
 export default function CourseDashboard() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [loadingDots, setLoadingDots] = useState('.');
-  const [userName, setUserName] = useState('');
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [loadingDots, setLoadingDots] = useState('.')
+  const [userName, setUserName] = useState('')
 
-  const apiKey = import.meta.env.VITE_NEWS_API_KEY;
+  const apiKey = import.meta.env.VITE_NEWS_API_KEY
 
   const categories = [
     { title: 'IMT', icon: '📘', link: '/IMT' },
     { title: 'Kalkulator Kalori', icon: '📊', link: '/kalori' },
     { title: 'Kalender Kehamilan', icon: '📝', link: '/kalender' },
-    { title: 'Quiz', icon: '📚', link: '/quiz' },
-  ];
+    { title: 'Quiz', icon: '📚', link: '/quiz' }
+  ]
 
   const potongJudul = (judul, maxLength = 80) => {
-    return judul.length > maxLength ? judul.slice(0, maxLength) + '...' : judul;
-  };
+    return judul.length > maxLength ? judul.slice(0, maxLength) + '...' : judul
+  }
 
   const isCacheValid = (cacheType) => {
     if (cacheType === 'userProfile') {
       return (
-        cache.userProfile && Date.now() - cache.userProfile.timestamp < CACHE_DURATION.userProfile
-      );
+        cache.userProfile &&
+        Date.now() - cache.userProfile.timestamp < CACHE_DURATION.userProfile
+      )
     }
     if (cacheType === 'berita') {
       return (
-        cache.berita.data && Date.now() - cache.berita.timestamp < CACHE_DURATION.berita
-      );
+        cache.berita.data &&
+        Date.now() - cache.berita.timestamp < CACHE_DURATION.berita
+      )
     }
-    return false;
-  };
+    return false
+  }
 
   const fetchUserProfile = async () => {
     if (isCacheValid('userProfile')) {
-      setUserName(cache.userProfile.name);
-      return;
+      setUserName(cache.userProfile.name)
+      return
     }
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData?.user?.id;
+      const { data: userData } = await supabase.auth.getUser()
+      const userId = userData?.user?.id
       if (userId) {
-        const { data, error } = await supabase.from('Profile').select('name').eq('id', userId).single();
+        const { data, error } = await supabase
+          .from('Profile')
+          .select('name')
+          .eq('id', userId)
+          .single()
         if (!error && data?.name) {
-          cache.userProfile = { name: data.name, timestamp: Date.now() };
-          setUserName(data.name);
+          cache.userProfile = { name: data.name, timestamp: Date.now() }
+          setUserName(data.name)
         }
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('Error fetching user profile:', error)
     }
-  };
+  }
 
   const fetchBerita = async (pageNumber = 1, forceRefresh = false) => {
     if (pageNumber === 1 && !forceRefresh && isCacheValid('berita')) {
-      setArticles(cache.berita.data);
-      setPage(cache.berita.page);
-      setLoading(false);
-      return;
+      setArticles(cache.berita.data)
+      setPage(cache.berita.page)
+      setLoading(false)
+      return
     }
-    setLoading(true);
+    setLoading(true)
     try {
-      const response = await fetch(`https://newsapi.org/v2/everything?q=kesehatan&language=id&pageSize=4&page=${pageNumber}&apiKey=${apiKey}`);
-      const data = await response.json();
+      const response = await fetch(
+        `https://newsapi.org/v2/everything?q=kesehatan&language=id&pageSize=4&page=${pageNumber}&apiKey=${apiKey}`
+      )
+      const data = await response.json()
       if (pageNumber === 1) {
-        setArticles(data.articles);
-        cache.berita = { data: data.articles, timestamp: Date.now(), page: 1 };
+        setArticles(data.articles)
+        cache.berita = { data: data.articles, timestamp: Date.now(), page: 1 }
       } else {
-        setArticles((prev) => [...prev, ...data.articles]);
+        setArticles((prev) => [...prev, ...data.articles])
       }
     } catch (error) {
-      console.error('Gagal memuat berita:', error);
+      console.error('Gagal memuat berita:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLoadingDots((prev) => (prev.length >= 3 ? '.' : prev + '.'));
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
+      setLoadingDots((prev) => (prev.length >= 3 ? '.' : prev + '.'))
+    }, 500)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
-    fetchUserProfile();
-    fetchBerita();
-  }, []);
+    fetchUserProfile()
+    fetchBerita()
+  }, [])
 
   const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchBerita(nextPage);
-  };
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchBerita(nextPage)
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 bg-gradient-to-b from-[#88DE7C] to-white relative">
-      
+    <div className="min-h-screen bg-gray-50 pb-20 bg-gradient-to-b from-[#88DE7C] to-[#a3ebb1] relative">
       {/* --- HEADER DIPERBAIKI --- */}
       {/* Menggunakan Flexbox untuk memisahkan teks dan gambar agar tidak bertabrakan */}
       <header className="relative bg-[#a3ebb1] h-[200px] text-white p-6 rounded-b-3xl overflow-hidden mb-8">
         <HeaderBackground />
         <div className="relative z-10 flex items-center justify-between h-full max-w-7xl mx-auto">
-          
           {/* 1. Kontainer Teks dengan lebar terbatas */}
           <div className="w-full md:w-2/3 lg:w-1/2">
             <h1 className="text-2xl font-bold text-[#164E50]">
@@ -158,7 +163,7 @@ export default function CourseDashboard() {
               Selamat datang kembali. Mari jaga kesehatan bersama hari ini.
             </p>
           </div>
-      
+
           {/* 2. Kontainer Gambar yang responsif (disembunyikan di layar kecil) */}
           <div className="h-full">
             <img
@@ -167,14 +172,15 @@ export default function CourseDashboard() {
               className="hidden md:block absolute bottom-0 right-0 h-[90%] w-auto object-contain z-10"
             />
           </div>
-      
         </div>
       </header>
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* --- KATEGORI --- */}
         <section>
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Fitur Unggulan</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            Fitur Unggulan
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {categories.map((category, index) => (
               <Link
@@ -182,7 +188,9 @@ export default function CourseDashboard() {
                 to={category.link || '#'}
                 className="group bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transform transition-all duration-300 flex flex-col items-center justify-center"
               >
-                <div className="text-5xl mb-3 transition-transform duration-300 group-hover:scale-110">{category.icon}</div>
+                <div className="text-5xl mb-3 transition-transform duration-300 group-hover:scale-110">
+                  {category.icon}
+                </div>
                 <p className="text-sm font-semibold text-gray-700 break-words">
                   {category.title}
                 </p>
@@ -194,7 +202,9 @@ export default function CourseDashboard() {
         {/* --- BERITA --- */}
         <section className="mt-12">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Berita Kesehatan Terkini</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              Berita Kesehatan Terkini
+            </h2>
           </div>
 
           {loading && page === 1 ? (
@@ -246,5 +256,5 @@ export default function CourseDashboard() {
         </section>
       </main>
     </div>
-  );
+  )
 }

@@ -272,7 +272,7 @@ const DetailMateri = () => {
   const content = detailData[judul]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-10 px-6 mb-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#88DE7C] to-[#a3ebb1] py-10 px-6 mb-12">
       <div className="max-w-4xl mx-auto mb-6">
         <button
           onClick={() => navigate('/after-imt')}

@@ -4,8 +4,41 @@ import { motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import Doktor from '/img/docter-min.png'
+import Hamil from '/img/pregnant-min.png'
 import tipsKehamilan from '../components/TipsKehamilan'
+
+const BackgroundWaveSVG = () => (
+  <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+    {/* Wave pertama di atas */}
+    <svg
+      className="absolute top-0 left-0 w-full h-80"
+      viewBox="0 0 1440 320"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+    >
+      <path
+        fill="#48aa7c"
+        fillOpacity="0.5"
+        d="M0,96L60,112C120,128,240,160,360,165.3C480,171,600,149,720,128C840,107,960,85,1080,96C1200,107,1320,149,1380,170.7L1440,192L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
+      />
+    </svg>
+
+    {/* Wave ketiga di atas - layer paling dalam */}
+    <svg
+      className="absolute top-0 left-0 w-full h-64"
+      viewBox="0 0 1440 320"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+      style={{ transform: 'translateY(40px)' }}
+    >
+      <path
+        fill="#48aa7c"
+        fillOpacity="0.3"
+        d="M0,32L60,48C120,64,240,96,360,101.3C480,107,600,85,720,74.7C840,64,960,64,1080,80C1200,96,1320,128,1380,144L1440,160L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
+      />
+    </svg>
+  </div>
+)
 
 export default function Kalender() {
   const navigate = useNavigate()
@@ -40,15 +73,20 @@ export default function Kalender() {
 
   return (
     <>
-      <div className="min-h-screen mx-auto p-4 bg-gradient-to-b from-[#88DE7C] to-white">
+      <div className="min-h-screen mx-auto p-4 bg-gradient-to-b from-[#88DE7C] to-[#a3ebb1] relative">
+        <BackgroundWaveSVG />
+
+        {/* Tombol Kembali dengan z-index 10 */}
         <button
           onClick={handleBack}
-          className="mb-6 flex items-center font-bold text-[#164E50] mt-4"
+          className="mb-6 flex items-center font-bold text-[#164E50] mt-4 z-10 relative px-3 py-2 rounded-lg hover:bg-white/20 transition-all duration-200"
         >
           <ArrowLeft className="mr-2 h-5 w-5" />
           Kembali
         </button>
-        <div className="max-w-md mx-auto p-6 shadow-xl rounded-xl mt-10 bg-white">
+
+        {/* Form kalkulator dengan z-index 10 */}
+        <div className="max-w-md mx-auto p-6 shadow-xl rounded-xl mt-10 bg-white/95 backdrop-blur-sm z-10 relative">
           <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
             Kalkulator Kehamilan
           </h2>
@@ -68,7 +106,7 @@ export default function Kalender() {
 
           <button
             onClick={handleCalculate}
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition duration-300"
+            className="w-full bg-[#88DE7C] hover:bg-[#48aa7c] text-white py-2 rounded-lg transition duration-300"
           >
             {loading ? 'Menghitung...' : 'Hitung Kehamilan'}
           </button>
@@ -108,7 +146,7 @@ export default function Kalender() {
           )}
         </div>
         <div className="gambar">
-          <img src={Doktor} alt="" />
+          <img src={Hamil} alt="" />
         </div>
       </div>
     </>
